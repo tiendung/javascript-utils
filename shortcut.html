@@ -1,0 +1,109 @@
+<html>
+<head>
+	<script src="shortcut.js" type="text/javascript"></script>
+</head>
+
+<body>
+<script type="text/javascript">
+
+function markCalled(id) {
+	var e = document.getElementById(id);
+	e.innerHTML = "Called";
+	e.className = "message-success";
+}
+
+function init() {
+	shortcut.add('x', function(){
+		alert('x');
+	});
+
+	shortcut.add('ctrl+x', function(){
+		shortcut.remove('x');
+		alert('remove x');
+	});
+
+	shortcut.add('meta+a', function(){
+		alert('metaa');
+	});
+
+	shortcut.add("1", function() {
+		markCalled("just1");
+	});
+	shortcut.add("Ctrl+1", function() {
+		markCalled("ctrl1");
+	});
+	shortcut.add("Alt+1", function() {
+		markCalled("alt1");
+	});
+	shortcut.add("Shift+1", function() {
+		markCalled("shift1");
+	});
+	shortcut.add("Ctrl+Alt+1", function() {
+		markCalled("ctrlalt1");
+	});
+	shortcut.add("Ctrl+Shift+1", function() {
+		markCalled("ctrlshift1");
+	});
+	shortcut.add("Shift+Alt+1", function() {
+		markCalled("shiftalt1");
+	});
+	shortcut.add("Ctrl+2", function() {
+		markCalled("ctrl2");
+	});
+	shortcut.add("3", function() {
+		markCalled("just3");
+	},{"disable_in_input":true});
+	shortcut.add("Ctrl+a", function() {
+		markCalled("ctrla");
+	},{"propagate":true});
+	shortcut.add("",function() {
+		markCalled("just4");
+	},{"keycode":52});
+}
+
+window.onload=init;
+</script>
+
+<input type="text"/>
+<textarea></textarea>
+<p>Just press the shown combinations - if the script works, the status will changed to 'Called'. For example, press the key '1'...</p>
+
+<dl>
+<dt>1</dt>
+<dd>Function Called : <span id="just1">Not Yet</span></dd>
+<dt>Ctrl+1</dt>
+<dd>Function Called : <span id="ctrl1">Not Yet</span></dd>
+
+<dt>Alt+1</dt>
+<dd>Function Called : <span id="alt1">Not Yet</span></dd>
+<dt>Shift+1</dt>
+<dd>Function Called : <span id="shift1">Not Yet</span></dd>
+
+<dt>Ctrl+Shift+1</dt>
+<dd>Function Called : <span id="ctrlshift1">Not Yet</span></dd>
+<dt>Ctrl+Alt+1</dt>
+
+<dd>Function Called : <span id="ctrlalt1">Not Yet</span></dd>
+<dt>Shift+Alt+1</dt>
+<dd>Function Called : <span id="shiftalt1">Not Yet</span></dd>
+
+<dt>Ctrl+2 - <a href="#" onclick="shortcut.remove('Ctrl+2');">Remove Shortcut</a></dt>
+<dd>Function Called : <span id="ctrl2">Not Yet</span><br />
+If you click the 'Remove Shortcut' Link before pressing the Ctrl+2 Combination, the function should NOT be called.</dd>
+
+<dt>3 - With disable_in_input = true</dt>
+<dd><input type="text" /> The function should NOT be called when typing '3' in the input field
+<br />Function Called : <span id="just3">Not Yet</span></dd>
+
+<dt>4</dt>
+<dd>Function Called : <span id="just4">Not Yet</span><br />
+This uses the 'keycode' option.</dd>
+
+<dt>Ctrl+A - With propagate = true</dt>
+<dd>Function Called : <span id="ctrla">Not Yet</span><br />
+If Ctrl+A is pressed, it will call the function and then propagate the event to the browser - selecting the text.
+</dd>
+</dl>
+
+</body>
+</html>
