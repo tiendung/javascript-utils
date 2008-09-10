@@ -5,6 +5,12 @@
 // @include        http://www.google.com/ig
 // ==/UserScript==
 (function () {
+	/**
+	 * Mediation style for iGoogle page
+	 *
+	 * Tien Dung
+	 * http://free-and-happy.blogspot.com/
+	 */
 
 // util function
 function $(id) { 
