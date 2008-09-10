@@ -1,0 +1,269 @@
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.2.6.min.js"></script>
+  <script src='http://mudim.googlecode.com/svn/trunk/mudim/mudim.js' type='text/javascript'></script>
+</head>
+
+<body>
+<script language="javascript">
+	// Refactored & Modified for Vietnamese 
+	// from http://orderedlist.com/demos/quicksilverjs/javascripts/quicksilver.js
+	String.prototype.score = function(abbreviation) { 
+	  if(abbreviation.length == 0) return 0.9;
+	  if(abbreviation.length > this.length) return 0.0;
+		
+		var i, j, c, sub_abbreviation, index, next_string, next_abbreviation, remaining_score, score;
+		
+	  for (i = abbreviation.length; i > 0; i--) {
+	    sub_abbreviation = abbreviation.substring(0, i);
+	    index = this.indexOf(sub_abbreviation);
+
+	    if (index < 0) continue;
+	    if (index + abbreviation.length > this.length) continue;
+
+	    next_string       = this.substring(index + sub_abbreviation.length);
+	    next_abbreviation = null;
+
+	    if (i >= abbreviation.length)
+	      next_abbreviation = '';
+	    else
+	      next_abbreviation = abbreviation.substring(i);
+	      remaining_score   = next_string.score(next_abbreviation, index);
+ 
+	    if (remaining_score > 0) {
+	      score = this.length - next_string.length;
+
+	      if (index != 0) {
+	        c = this.charCodeAt(index - 1);
+	        if (c === 32 || c === 9) {
+	          for (j = index - 2; j >= 0; j--) {
+	            c = this.charCodeAt(j);
+	            score -= (c === 32 || c === 9) ? 1 : 0.15;
+	          }
+	        } else {
+	          score -= index;
+	        }
+	      }
+   
+	      score += remaining_score * next_string.length;
+	      score /= this.length;
+	      return score;
+	    } // end if (remaining_score > 0)
+	  } // end for (i...)
+	  return 0.0;
+	}
+
+	// Modified to work with select/options 
+	// from http://ejohn.org/blog/jquery-livesearch/
+	jQuery.fn.liveUpdate = function(select, maxSize) {
+		maxSize = maxSize || 10;
+	  select = jQuery(select);
+
+	  if ( select.length ) {
+	    var rows = jQuery('option', select),
+		      cache = rows.map(function(){
+		        return this.innerHTML.toLowerCase();
+		      });
+			
+			var filtering = true;
+			
+	    this
+	      .keyup(filter)
+				.keyup(adjustSelectSize)
+				.keypress(function (event) {
+					var code = (event.charCode || event.keyCode);
+					
+					if (code === 13 || code === 38 || code === 40) {
+						filtering = false;
+						event.preventDefault();
+
+						var current = jQuery("option:selected:visible", select);
+
+						if (code === 13) // Enter
+							if (current.length > 0)
+								select.parents('form').submit();
+
+						if (code === 38) // Up
+							current.prevAll("option:visible:first").attr("selected", "selected")[0] ||
+							current.parent().prev(":visible").children("option:visible:last").attr("selected", "selected");
+						
+						if (code === 40) // Down
+							current.nextAll("option:visible:first").attr("selected", "selected")[0] ||
+							current.parent().next(":visible").children("option:visible:first").attr("selected", "selected");
+					}
+				});
+	  }
+
+	  return this;
+				
+		function adjustSelectSize() {
+			var size;
+			jQuery("optgroup", select).each( function () {
+				size = jQuery("option:visible", this).length;
+				jQuery(this).css("display", size > 0 ? "" : "none");
+			});
+			
+			size = 0;
+			if (jQuery(this).val() !== "") {
+				size = jQuery("option:visible", select).length + jQuery("optgroup:visible", select).length;
+				if (maxSize < size) size = maxSize;
+			}
+			select.attr("size", size);
+		}
+	
+	  function filter(){
+			if (!filtering) {
+				filtering = true;
+				return;
+			}
+			
+	    var scores = [], score, term = jQuery.trim( jQuery(this).val().toLowerCase() );
+
+	    if ( !term ) {
+	      rows.show();
+	    } else {
+	      rows.hide();
+
+	      cache.each(function(i){
+	        score = this.score(term);
+	        if (score > 0) { scores.push([score, i]); }
+	      });
+
+	      jQuery.each(scores.sort(function(a, b){return b[0] - a[0];}), function(){
+	        jQuery(rows[ this[1] ]).show();
+	      });
+
+				// select highest score options
+				if (scores.length > 0)
+					jQuery(rows[scores[0][1]]).attr("selected","selected");
+	    }
+	  }
+	};
+
+	$(document).ready(function() {
+		var jumpmenu = jQuery(document.jumpmenu);
+
+		// Turn off browser auto complete function
+		jumpmenu.attr("autocomplete", "off");
+
+		// Init Quicksilver search
+		jQuery('#q').liveUpdate(jQuery("select", jumpmenu), 20).focus();
+		
+	});
+	
+</script>
+
+
+<form onsubmit="if(document.jumpmenu.f.value == -1){return false;}" action="http://www.fotech.org/forum/index.php?act=SF" method="get" name="jumpmenu">
+<div><input type="text" value="" name="q" id="q"></div>
+<input name="act" value="SF" type="hidden">
+<input name="s" value="" type="hidden">
+<select class="dropdown" onchange="if(this.options[this.selectedIndex].value != -1){ document.jumpmenu.submit() }" name="f">
+<optgroup label="Nhảy tới trang">
+	<option value="sj_home">Diễn đàn chính</option>
+	<option value="sj_search">Tìm kiếm</option>
+	<option value="sj_help">Trợ giúp</option>
+</optgroup>
+<optgroup label="Diễn đàn nhảy tới">
+<option value="336">Trung tâm FOTECH</option>
+<option value="1">&nbsp;&nbsp;|-- Thông báo</option>
+<option value="333">&nbsp;&nbsp;|-- Mo... để đeo</option>
+<option value="2">&nbsp;&nbsp;|-- Ý kiến góp ý/Hỏi đáp về FOTECH</option>
+<option value="337">&nbsp;&nbsp;|-- Ban điều hành</option>
+<option value="28">&nbsp;&nbsp;|---- Phòng họp BQT</option>
+<option value="321">&nbsp;&nbsp;|---- FOTECH Assembly</option>
+<option value="310">Trao đổi chuyên môn</option>
+<option value="196">&nbsp;&nbsp;|-- Yêu cầu tài liệu, bài báo chuyên ngành</option>
+<option value="65">&nbsp;&nbsp;|-- Giải đáp &amp; Chỉ dẫn</option>
+<option value="8">&nbsp;&nbsp;|-- Điện tử - Viễn thông - Tự động hóa</option>
+<option value="227">&nbsp;&nbsp;|---- Những vấn đề chung về Điện tử - Viễn thông - Tự động hóa</option>
+<option value="197">&nbsp;&nbsp;|------ Thư viện website</option>
+<option value="198">&nbsp;&nbsp;|------ Dành cho những người mới bắt đầu</option>
+<option value="229">&nbsp;&nbsp;|---- Vi điều khiển - Vi xử lý</option>
+<option value="230">&nbsp;&nbsp;|---- Điện tử tương tự</option>
+<option value="231">&nbsp;&nbsp;|---- Tự động hóa, PLC, và kĩ thuật Robotics</option>
+<option value="232">&nbsp;&nbsp;|---- Kỹ thuật mạng, viễn thông</option>
+<option value="233">&nbsp;&nbsp;|---- Kỹ thuật truyền hình</option>
+<option value="234">&nbsp;&nbsp;|---- Các chuyên đề nâng cao</option>
+<option value="228">&nbsp;&nbsp;|---- Điện tử số - Vi điện tử - Xử lý tín hiệu số</option>
+<option value="73">&nbsp;&nbsp;|-- Công Nghệ Thông Tin</option>
+<option value="335">&nbsp;&nbsp;|---- Lập trình</option>
+<option value="74">&nbsp;&nbsp;|------ C/C++</option>
+<option value="96">&nbsp;&nbsp;|------ .NET</option>
+<option value="239">&nbsp;&nbsp;|------ Java</option>
+<option value="123">&nbsp;&nbsp;|------ WEB</option>
+<option value="140">&nbsp;&nbsp;|-------- PHP</option>
+<option value="170">&nbsp;&nbsp;|-------- Javascript</option>
+<option value="235">&nbsp;&nbsp;|------ Cấu trúc dữ liệu &amp; Thuật toán</option>
+<option value="339">&nbsp;&nbsp;|------ Assembly</option>
+<option value="340">&nbsp;&nbsp;|------ SQL &amp; DBMS</option>
+<option value="341">&nbsp;&nbsp;|------ Pascal &amp; Delphi</option>
+<option value="121">&nbsp;&nbsp;|---- Phần cứng</option>
+<option value="135">&nbsp;&nbsp;|---- Phần mềm</option>
+<option value="66">&nbsp;&nbsp;|------ Windows</option>
+<option value="69">&nbsp;&nbsp;|------ Office</option>
+<option value="67">&nbsp;&nbsp;|---- Internet</option>
+<option value="238">&nbsp;&nbsp;|---- Mạng máy tính</option>
+<option value="237">&nbsp;&nbsp;|---- Bảo mật</option>
+<option value="70">&nbsp;&nbsp;|---- Unix/Linux</option>
+<option value="236">&nbsp;&nbsp;|---- Công nghệ Phần mềm</option>
+<option value="13">&nbsp;&nbsp;|-- Quản Lý và Làm Việc Nhóm</option>
+<option value="308">&nbsp;&nbsp;|-- Đạo đức &amp; Nghề nghiệp</option>
+<option value="311">Góc Sinh Viên</option>
+<option value="81">&nbsp;&nbsp;|-- Nhóm &amp; Câu Lạc Bộ</option>
+<option value="14">&nbsp;&nbsp;|---- CLB Tiếng Anh</option>
+<option value="241">&nbsp;&nbsp;|---- CLB toán học</option>
+<option value="249">&nbsp;&nbsp;|---- CLB Thuyết trình</option>
+<option value="136">&nbsp;&nbsp;|---- CLB Vật lý</option>
+<option value="137">&nbsp;&nbsp;|---- OpenFNC</option>
+<option value="138">&nbsp;&nbsp;|---- ASPDOTNET-VN Group</option>
+<option value="141">&nbsp;&nbsp;|---- Robotics</option>
+<option value="322">&nbsp;&nbsp;|---- CLB Guitar</option>
+<option value="331">&nbsp;&nbsp;|---- HTT Group</option>
+<option value="332">&nbsp;&nbsp;|---- CLB Khiêu Vũ</option>
+<option value="338">&nbsp;&nbsp;|---- Fotech Task Force</option>
+<option value="240">&nbsp;&nbsp;|-- Giao lưu</option>
+<option value="89">&nbsp;&nbsp;|-- Học bổng - Cơ hội thực tập - Việc làm</option>
+<option value="90">&nbsp;&nbsp;|-- Việt kiều yêu nước</option>
+<option value="91">&nbsp;&nbsp;|-- Sinh Viên Tình Nguyện</option>
+<option value="139">&nbsp;&nbsp;|-- Học Hành Thi Cử</option>
+<option value="22">&nbsp;&nbsp;|---- Cán sự môn học &amp; Thi học kì</option>
+<option value="292">&nbsp;&nbsp;|---- Đề cương</option>
+<option value="293">&nbsp;&nbsp;|---- Đề thi các năm</option>
+<option value="294">&nbsp;&nbsp;|---- Ebook</option>
+<option value="82">&nbsp;&nbsp;|-- Cảm xúc, Tình yêu</option>
+<option value="16">&nbsp;&nbsp;|-- Văn học - Nghệ thuật</option>
+<option value="64">&nbsp;&nbsp;|---- Tác phẩm</option>
+<option value="83">&nbsp;&nbsp;|-- Sở thích</option>
+<option value="15">&nbsp;&nbsp;|---- Bóng đá</option>
+<option value="177">&nbsp;&nbsp;|---- Graphics</option>
+<option value="20">&nbsp;&nbsp;|---- GAMES</option>
+<option value="119">&nbsp;&nbsp;|---- Điện Ảnh</option>
+<option value="92">&nbsp;&nbsp;|---- Âm nhạc</option>
+<option value="18">&nbsp;&nbsp;|-- Cười hóm hỉnh...</option>
+<option value="84">&nbsp;&nbsp;|-- Rao vặt</option>
+<option value="314">Tổ chức</option>
+<option value="296">&nbsp;&nbsp;|-- Cựu Sinh Viên</option>
+<option value="172">&nbsp;&nbsp;|---- Cùng khóa 44</option>
+<option value="297">&nbsp;&nbsp;|---- Cùng khóa 45</option>
+<option value="163">&nbsp;&nbsp;|---- Cùng khóa 46</option>
+<option value="162">&nbsp;&nbsp;|---- Cùng khóa 47</option>
+<option value="161">&nbsp;&nbsp;|---- Cùng khóa 48</option>
+<option value="103">&nbsp;&nbsp;|------ K48CB</option>
+<option value="104">&nbsp;&nbsp;|------ K48CC</option>
+<option value="6">&nbsp;&nbsp;|-- Đoàn &amp; Hội</option>
+<option value="126">&nbsp;&nbsp;|---- Sổ tay cán bộ Đoàn</option>
+<option value="317">&nbsp;&nbsp;|---- Liên Chi CNTT</option>
+<option value="318">&nbsp;&nbsp;|---- Hội Sinh Viên</option>
+<option value="160">&nbsp;&nbsp;|-- Cùng khóa 49</option>
+<option value="146">&nbsp;&nbsp;|---- K49CA</option>
+<option value="187">&nbsp;&nbsp;|-- Cùng khóa 50</option>
+<option value="307">&nbsp;&nbsp;|-- Cùng khóa 51</option>
+<option value="334">&nbsp;&nbsp;|---- K51ĐB</option>
+<option value="330">&nbsp;&nbsp;|-- Cùng khóa 52</option>
+</optgroup>
+</select>
+</form>
+</body>
+</html>
