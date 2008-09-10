@@ -2,15 +2,25 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.2.6.min.js"></script>
-  <script src='http://mudim.googlecode.com/svn/trunk/mudim/mudim.js' type='text/javascript'></script>
 </head>
 
 <body>
 <script language="javascript">
-	// Refactored & Modified for Vietnamese 
+	var viUtf8ToAscii = {"a":"a","á":"a","à":"a","ả":"a","ã":"a","ạ":"a","A":"a","Á":"a","À":"a","Ả":"a","Ã":"a","Ạ":"a","ă":"a","ắ":"a","ằ":"a","ẳ":"a","ẵ":"a","ặ":"a","Ă":"a","Ắ":"a","Ằ":"a","Ẳ":"a","Ẵ":"a","Ặ":"a","â":"a","ấ":"a","ầ":"a","ẩ":"a","ẫ":"a","ậ":"a","Â":"a","Ấ":"a","Ầ":"a","Ẩ":"a","Ẫ":"a","Ậ":"a","e":"e","é":"e","è":"e","ẻ":"e","ẽ":"e","ẹ":"e","E":"e","É":"e","È":"e","Ẻ":"e","Ẽ":"e","Ẹ":"e","ê":"e","ế":"e","ề":"e","ể":"e","ễ":"e","ệ":"e","Ê":"e","Ế":"e","Ề":"e","Ể":"e","Ễ":"e","Ệ":"e","i":"i","í":"i","ì":"i","ỉ":"i","ĩ":"i","ị":"i","I":"i","Í":"i","Ì":"i","Ỉ":"i","Ĩ":"i","Ị":"i","u":"u","ú":"u","ù":"u","ủ":"u","ũ":"u","ụ":"u","U":"u","Ú":"u","Ù":"u","Ủ":"u","Ũ":"u","Ụ":"u","ư":"u","ứ":"u","ừ":"u","ử":"u","ữ":"u","ự":"u","Ư":"u","Ứ":"u","Ừ":"u","Ử":"u","Ữ":"u","Ự":"u","y":"y","ý":"y","ỳ":"y","ỷ":"y","ỹ":"y","ỵ":"y","Y":"y","Ý":"y","Ỳ":"y","Ỷ":"y","Ỹ":"y","Ỵ":"y","o":"o","ó":"o","ò":"o","ỏ":"o","õ":"o","ọ":"o","O":"o","Ó":"o","Ò":"o","Ỏ":"o","Õ":"o","Ọ":"o","ô":"o","ố":"o","ồ":"o","ổ":"o","ỗ":"o","ộ":"o","Ô":"o","Ố":"o","Ồ":"o","Ổ":"o","Ỗ":"o","Ộ":"o","ơ":"o","ớ":"o","ờ":"o","ở":"o","ỡ":"o","ợ":"o","Ơ":"o","Ớ":"o","Ờ":"o","Ở":"o","Ỡ":"o","Ợ":"o","đ":"d","Đ":"d"};
+	
+	String.prototype.viUtf8ToAscii = function() {
+		var i, c, l = this.length, a = [];
+		for (i = 0; i < l; i++) {
+			c = this.charAt(i);
+			a.push( viUtf8ToAscii[c] || c );
+		}
+		return a.join("");
+	};
+	
+	// Refactored & Modified
 	// from http://orderedlist.com/demos/quicksilverjs/javascripts/quicksilver.js
 	String.prototype.score = function(abbreviation) { 
-	  if(abbreviation.length == 0) return 0.9;
+	  if(abbreviation.length === 0) return 0.9;
 	  if(abbreviation.length > this.length) return 0.0;
 		
 		var i, j, c, sub_abbreviation, index, next_string, next_abbreviation, remaining_score, score;
@@ -22,28 +32,28 @@
 	    if (index < 0) continue;
 	    if (index + abbreviation.length > this.length) continue;
 
-	    next_string       = this.substring(index + sub_abbreviation.length);
+	    next_string = this.substring(index + sub_abbreviation.length);
 	    next_abbreviation = null;
 
 	    if (i >= abbreviation.length)
-	      next_abbreviation = '';
+	      next_abbreviation = "";
 	    else
 	      next_abbreviation = abbreviation.substring(i);
-	      remaining_score   = next_string.score(next_abbreviation, index);
+
+      remaining_score = next_string.score(next_abbreviation, index);
  
 	    if (remaining_score > 0) {
 	      score = this.length - next_string.length;
 
 	      if (index != 0) {
 	        c = this.charCodeAt(index - 1);
-	        if (c === 32 || c === 9) {
+	        if (c === 32 || c === 9)
 	          for (j = index - 2; j >= 0; j--) {
 	            c = this.charCodeAt(j);
 	            score -= (c === 32 || c === 9) ? 1 : 0.15;
 	          }
-	        } else {
+	        else
 	          score -= index;
-	        }
 	      }
    
 	      score += remaining_score * next_string.length;
@@ -104,10 +114,13 @@
 				jQuery(this).css("display", size > 0 ? "" : "none");
 			});
 			
-			size = 0;
-			if (jQuery(this).val() !== "") {
-				size = jQuery("option:visible", select).length + jQuery("optgroup:visible", select).length;
-				if (maxSize < size) size = maxSize;
+			size = jQuery("option:visible", select).length + jQuery("optgroup:visible", select).length;
+			if (maxSize < size) size = maxSize;
+
+			select.css("display", size === 0 ? "none" : "");
+			if (jQuery.trim(jQuery(this).val()) === "") {
+				size = 0;
+				jQuery("option:visible:first", select).attr("selected", "selected");
 			}
 			select.attr("size", size);
 		}
@@ -122,11 +135,12 @@
 
 	    if ( !term ) {
 	      rows.show();
+				select.show();
 	    } else {
 	      rows.hide();
 
 	      cache.each(function(i){
-	        score = this.score(term);
+					score = this.viUtf8ToAscii().score(term.viUtf8ToAscii());
 	        if (score > 0) { scores.push([score, i]); }
 	      });
 
@@ -134,7 +148,7 @@
 	        jQuery(rows[ this[1] ]).show();
 	      });
 
-				// select highest score options
+				// select the highest score option
 				if (scores.length > 0)
 					jQuery(rows[scores[0][1]]).attr("selected","selected");
 	    }
