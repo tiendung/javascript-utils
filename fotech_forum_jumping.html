@@ -116,33 +116,39 @@
 				.keyup(adjustSelectSize)
 				 // hide options while textbox loosing focus
 				.blur(function () {select.attr("size", 0);})
-				.focus(adjustSelectSize)
-				.keydown(function (event) {
-					if (jQuery.trim(jQuery(this).val()) === "") return;
-					var code = (event.keyCode || event.which);
-					
-					if (code === 13 || code === 38 || code === 40) {
-						filtering = false;
-						event.preventDefault();
-
-						var current = jQuery("option:selected:visible", select);
-
-						if (code === 13) // Enter
-							if (current.length > 0)
-								select.parents('form').submit();
-
-						if (code === 38) // Up
-							current.prevAll("option:visible:first").attr("selected", "selected")[0] ||
-							current.parent().prev(":visible").children("option:visible:last").attr("selected", "selected");
-						
-						if (code === 40) // Down
-							current.nextAll("option:visible:first").attr("selected", "selected")[0] ||
-							current.parent().next(":visible").children("option:visible:first").attr("selected", "selected");
-					}
-				});
+				.focus(adjustSelectSize);
+			
+			if (jQuery.browser.msie)
+				this.keydown(keyHander);
+			else
+				this.keypress(keyHander);
 	  }
 
 	  return this;
+
+		function keyHandler(event) {
+			if (jQuery.trim(jQuery(this).val()) === "") return;
+			var code = (event.keyCode || event.which);
+			
+			if (code === 13 || code === 38 || code === 40) {
+				filtering = false;
+				event.preventDefault();
+
+				var current = jQuery("option:selected:visible", select);
+
+				if (code === 13) // Enter
+					if (current.length > 0)
+						select.parents('form').submit();
+
+				if (code === 38) // Up
+					current.prevAll("option:visible:first").attr("selected", "selected")[0] ||
+					current.parent().prev(":visible").children("option:visible:last").attr("selected", "selected");
+				
+				if (code === 40) // Down
+					current.nextAll("option:visible:first").attr("selected", "selected")[0] ||
+					current.parent().next(":visible").children("option:visible:first").attr("selected", "selected");
+			}
+		}
 				
 		function adjustSelectSize() {
 			var size;
