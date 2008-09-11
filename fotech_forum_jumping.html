@@ -102,6 +102,8 @@
 	    this
 	      .keyup(filter)
 				.keyup(adjustSelectSize)
+				.blur(function () {select.attr("size", 0);})
+				.focus(adjustSelectSize)
 				.keypress(function (event) {
 					var code = (event.charCode || event.keyCode);
 					
