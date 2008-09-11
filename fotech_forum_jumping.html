@@ -99,9 +99,20 @@
 			
 			var filtering = true;
 			
+			rows
+				// select option when mouseover
+				.mouseover(function (event) {
+					jQuery(this).attr("selected", "selected");
+				})
+				.mousedown(function (event) {
+					jQuery(this).attr("selected", "selected");
+					select.parents('form').submit();
+				});
+			
 	    this
 	      .keyup(filter)
 				.keyup(adjustSelectSize)
+				 // hide options while textbox loosing focus
 				.blur(function () {select.attr("size", 0);})
 				.focus(adjustSelectSize)
 				.keypress(function (event) {
