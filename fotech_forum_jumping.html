@@ -103,8 +103,8 @@
 			rows
 				// select option when mouseover
 				.mouseover(function (event) {
-					if (filtering)
-						jQuery(this).attr("selected", "selected");
+					if (!filtering) return;
+					jQuery(this).attr("selected", "selected");
 				})
 				.mousedown(function (event) {
 					jQuery(this).attr("selected", "selected");
@@ -117,8 +117,9 @@
 				 // hide options while textbox loosing focus
 				.blur(function () {select.attr("size", 0);})
 				.focus(adjustSelectSize)
-				.keypress(function (event) {
-					var code = (event.charCode || event.keyCode);
+				.keydown(function (event) {
+					if (jQuery.trim(jQuery(this).val()) === "") return;
+					var code = (event.keyCode || event.which);
 					
 					if (code === 13 || code === 38 || code === 40) {
 						filtering = false;
