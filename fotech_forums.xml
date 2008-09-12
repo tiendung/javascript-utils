@@ -257,7 +257,7 @@
 	<div><input type="text" value="" name="q" id="q"></div>
 	<input name="act" value="SF" type="hidden">
 	<input name="s" value="" type="hidden">
-	<select class="dropdown" onchange="if(this.options[this.selectedIndex].value != -1){ document.jumpmenu.submit() }" name="f">
+	<select class="dropdown" name="f">
 	<optgroup label="Nhảy tới trang">
 		<option value="sj_home">Diễn đàn chính</option>
 		<option value="sj_search">Tìm kiếm</option>
