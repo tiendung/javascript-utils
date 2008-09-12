@@ -253,7 +253,7 @@
 	</script>
 
 
-	<form onsubmit="if(document.jumpmenu.f.value == -1){return false;}" action="window.open('http://www.fotech.org/forum/index.php?act=SF')" method="get" name="jumpmenu">
+	<form action="http://www.fotech.org/forum/index.php?act=SF" method="get" name="jumpmenu">
 	<div><input type="text" value="" name="q" id="q"></div>
 	<input name="act" value="SF" type="hidden">
 	<input name="s" value="" type="hidden">
