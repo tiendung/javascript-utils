@@ -141,6 +141,15 @@
 					.bind(jQuery.browser.msie ? "keydown" : "keypress", keyHandler);
 			}
 
+			// open in a new window :) => for iGoogle gadget
+			select.parents('form').submit( function (event) {
+				var url = "http://www.fotech.org/forum/index.php?act=SF&f=";
+				url += jQuery("option:selected:visible", select).val();
+				window.open(url);
+				event.preventDefault();
+				return false;
+			});
+
 		  return this;
 
 			function keyHandler(event) {
@@ -244,7 +253,7 @@
 	</script>
 
 
-	<form onsubmit="if(document.jumpmenu.f.value == -1){return false;}" action="http://www.fotech.org/forum/index.php?act=SF" method="get" name="jumpmenu">
+	<form onsubmit="if(document.jumpmenu.f.value == -1){return false;}" action="window.open('http://www.fotech.org/forum/index.php?act=SF')" method="get" name="jumpmenu">
 	<div><input type="text" value="" name="q" id="q"></div>
 	<input name="act" value="SF" type="hidden">
 	<input name="s" value="" type="hidden">

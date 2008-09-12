@@ -119,7 +119,16 @@
 				.focus(adjustSelectSize)
 				.bind(jQuery.browser.msie ? "keydown" : "keypress", keyHandler);
 		}
-		
+
+		// // open in a new window :) => for iGoogle gadget
+		// select.parents('form').submit( function (event) {
+		// 	var url = "http://www.fotech.org/forum/index.php?act=SF&f=";
+		// 	url += jQuery("option:selected:visible", select).val();
+		// 	window.open(url);
+		// 	event.preventDefault();
+		// 	return false;
+		// });
+
 	  return this;
 
 		function keyHandler(event) {
@@ -217,7 +226,6 @@
 
 		// Init Quicksilver search
 		jQuery('#q').liveUpdate(jQuery("select", jumpmenu), 20).focus();
-		
 	});
 	
 </script>
