@@ -237,7 +237,7 @@
 			jumpmenu.attr("autocomplete", "off");
 
 			// Init Quicksilver search
-			jQuery('#q').liveUpdate(jQuery("select", jumpmenu), 20).focus();
+			jQuery('#q').liveUpdate(jQuery("select", jumpmenu), 10).focus();
 
 		});
 
