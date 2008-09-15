@@ -3,7 +3,7 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<title>FOTECH</title>
-	<script type="text/javascript" src="jquery.js"></script>
+	<script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.2.6.min.js"></script>
 </head>
 
 <body>
@@ -117,17 +117,17 @@
 				 // hide options while textbox loosing focus
 				.blur(function () {select.attr("size", 0);})
 				.focus(adjustSelectSize)
-				.bind(jQuery.browser.msie ? "keydown" : "keypress", keyHandler);
+				.bind(jQuery.browser.msie || jQuery.browser.safari ? "keydown" : "keypress", keyHandler);
 		}
 
-		// // open in a new window :) => for iGoogle gadget
-		// select.parents('form').submit( function (event) {
-		// 	var url = "http://www.fotech.org/forum/index.php?act=SF&f=";
-		// 	url += jQuery("option:selected:visible", select).val();
-		// 	window.open(url);
-		// 	event.preventDefault();
-		// 	return false;
-		// });
+		// open in a new window :) => for iGoogle gadget
+		select.parents('form').submit( function (event) {
+			var url = "http://www.fotech.org/forum/index.php?act=SF&f=";
+			url += jQuery("option:selected:visible", select).val();
+			window.open(url);
+			event.preventDefault();
+			return false;
+		});
 
 	  return this;
 
@@ -171,16 +171,24 @@
 		}
 				
 		function adjustSelectSize() {
+			if (jQuery.browser.msie || jQuery.browser.safari) {
+				select.attr("size", 15);
+				return;
+			}
+			
 			var size;
 			jQuery("optgroup", select).each( function () {
 				size = jQuery("option:visible", this).length;
-				jQuery(this).css("display", size > 0 ? "" : "none");
+				if (size > 0) jQuery(this).show();
+				else jQuery(this).hide();
 			});
 			
 			size = jQuery("option:visible", select).length + jQuery("optgroup:visible", select).length;
 			if (maxSize < size) size = maxSize;
 
-			select.css("display", size === 0 ? "none" : "");
+			if (size > 0) select.show();
+			else select.hide();
+
 			if (jQuery.trim(jQuery(this).val()) === "") {
 				size = 0;
 				jQuery("option:visible:first", select).attr("selected", "selected");
@@ -231,11 +239,11 @@
 </script>
 
 
-<form onsubmit="if(document.jumpmenu.f.value == -1){return false;}" action="http://www.fotech.org/forum/index.php?act=SF" method="get" name="jumpmenu">
+<form action="http://www.fotech.org/forum/index.php?act=SF" method="get" name="jumpmenu">
 <div><input type="text" value="" name="q" id="q"></div>
 <input name="act" value="SF" type="hidden">
 <input name="s" value="" type="hidden">
-<select class="dropdown" onchange="if(this.options[this.selectedIndex].value != -1){ document.jumpmenu.submit() }" name="f">
+<select class="dropdown" name="f">
 <optgroup label="Nhảy tới trang">
 	<option value="sj_home">Diễn đàn chính</option>
 	<option value="sj_search">Tìm kiếm</option>
