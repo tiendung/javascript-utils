@@ -1,0 +1,99 @@
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.2.6.min.js?0"></script>
+</head>
+
+<body>
+	<script language="javascript">
+	  jQuery(document).ready( function () {
+
+			var questions = jQuery("#question_container input[name*=cau]");
+			var notification = jQuery("#notification");
+
+			questions.attr('disabled', 'disabled');
+
+			jQuery("input[name=start]", notification).click( function ( event ) {
+				questions.attr('disabled', '');
+			  setTimer( 20 /*seconds*/, {
+			    10: function () { display("Just 10 seconds to go"); },
+			     5: function () { display("5 seconds left");        },
+			     0: function () { 
+								display("Time is up baby");
+								questions.attr('disabled', 'disabled');
+							}
+			  });
+			});
+
+			function display( str ) {
+				notification.html(str);
+		  }
+
+		  function toMinuteAndSecond( x ) {
+		    return Math.floor(x/60) + ":" + x%60;
+		  }
+
+		  function setTimer( remain, actions ) {
+		    (function countdown() {
+		       display(toMinuteAndSecond(remain));
+		       actions[remain] && actions[remain]();
+		       (remain -= 1) >= 0 && setTimeout(arguments.callee, 1000);
+		    })();
+		  }
+
+		});
+	</script>
+	
+	<div width="800" align="center">
+		<h2 align="center">Trắc Nghiệm Kiến Thức Nguồn Mở</h2>
+			<form name="nguoidung" method="post" action="/quiz/index.php">
+				<table>
+					<tr>
+						<td><b>Tên bạn</b></td>
+						<td><input name="name" size="40" type="text"></td>
+					</tr>
+					<tr>
+						<td><b>Địa chỉ</b></td>
+						<td><input name="diachi" size="40" type="text"></td>
+					</tr>
+					<tr>
+						<td><b>Số điện thoại</b></td>
+						<td><input name="phone" size="40" type="text"></td>
+					</tr>		
+					<tr>
+						<td><b>Số Chứng Minh Thư</b></td>
+						<td><input name="cmt" size="40" type="text"></td>
+					</tr>		
+					<tr>
+						<td><b>Ngày sinh</b></td>
+						<td><input name="ngaysinh" size="40" type="text"></td>
+					</tr>		
+				</table>
+
+				<div id="notification"><input type="button" name="start" value="start" /></div>
+				
+				<table id="question_container" bgcolor="#999999" width="600">
+					<tbody><tr>
+						<td><span style="color: rgb(255, 255, 255);"> <b>Câu 1</b>: q4 <br></span><br>
+<input name="cau1" value="1" type="radio">1<br><input name="cau1" value="2" type="radio">2<br><input name="cau1" value="3" type="radio">3<br><input name="cau1" value="4" type="radio">4<br><input name="id1" value="7" type="hidden"><br>						</td>
+					</tr>
+					<tr>
+						<td><span style="color: rgb(255, 255, 255);"> <b>Câu 2</b>: Q2 <br></span><br>
+<input name="cau2" value="1" type="radio">1<br><input name="cau2" value="2" type="radio">2<br><input name="cau2" value="3" type="radio">3<br><input name="cau2" value="4" type="radio">4<br><input name="id2" value="5" type="hidden"><br>						</td>
+					</tr>
+					<tr>
+						<td><span style="color: rgb(255, 255, 255);"> <b>Câu 3</b>: Q5 <br></span><br>
+<input name="cau3" value="1" type="radio">1<br><input name="cau3" value="2" type="radio">2<br><input name="cau3" value="3" type="radio">3<br><input name="cau3" value="4" type="radio">4<br><input name="id3" value="8" type="hidden"><br>						</td>
+					</tr>
+					<tr>
+						<td>
+							<input name="socau" value="4" type="hidden">  <!-- Cho biết số câu đã xuất ra -->
+							<input name="submit" value="Hoàn Thành" type="submit">
+						</td>
+					</tr>
+
+				</tbody></table>
+			</form>
+</div>
+</body>
+</html>
